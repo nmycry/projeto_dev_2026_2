@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Visita reservada — Alambique Sertão{% endblock %}
+
+{% block conteudo %}
+<section class="px-6 py-12 max-w-2xl">
+  <h1 class="font-display text-[46px] leading-tight">Visita reservada</h1>
+  <p class="mt-4 leading-[1.6]">
+    {{ visita.nome }}, sua visita está com status
+    <span class="inline-block rounded-full px-3 py-1 text-[14px] bg-[#F0E4CE] text-[#7A5518]">pendente</span>
+    de confirmação.
+  </p>
+
+  <dl class="mt-8 space-y-3 text-[16px]">
+    <div class="flex justify-between border-b border-barrica pb-2">
+      <dt>Experiência</dt>
+      <dd>{{ visita.experiencia.titulo }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-barrica pb-2">
+      <dt>Data</dt>
+      <dd>{{ visita.data|date:"d/m/Y" }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-barrica pb-2">
+      <dt>Horário</dt>
+      <dd>{{ visita.horario|time:"H:i" }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-barrica pb-2">
+      <dt>Pessoas</dt>
+      <dd>{{ visita.num_pessoas }}</dd>
+    </div>
+  </dl>
+
+  <a
+    href="{% url 'visitas:home' %}"
+    class="inline-block mt-8 px-6 py-3 bg-cobre text-papel rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+  >
+    Voltar para a home
+  </a>
+</section>
+{% endblock %}

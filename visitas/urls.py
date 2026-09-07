@@ -6,4 +6,5 @@ app_name = 'visitas'
 
 urlpatterns = [
     path('', publico.home, name='home'),
+    path('agendamento/<int:pk>/sucesso/', publico.sucesso, name='sucesso'),
 ]
