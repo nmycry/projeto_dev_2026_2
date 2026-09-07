@@ -186,21 +186,28 @@ entrega terminava numa sabatina de 5 perguntas que eu tinha que responder
 antes de seguir para o próximo módulo — se eu não soubesse explicar, o
 módulo não estava pronto, mesmo funcionando.
 
+**Uma vez em que a IA me deu algo ruim ou errado:** a IA gerou os templates
+da página pública e do painel, e o código estava sintaticamente correto: as
+views respondiam, os dados apareciam, os testes passavam. Quando abri no
+navegador em tela cheia, todo o conteúdo estava confinado a menos da metade
+da largura da janela, e as linhas divisórias das seções paravam no meio da
+tela, como se a página tivesse sido cortada ao meio. Percebi olhando, não
+lendo — é o tipo de erro que não quebra nada: nenhuma exceção, nenhum teste
+vermelho, HTML válido. Se eu tivesse revisado só o código, sem abrir a página
+em resolução cheia, teria entregado assim. Inspecionei o elemento no
+DevTools para achar qual wrapper estava limitando a largura, corrigi a
+estrutura do container e movi as bordas de seção para a tag externa, de modo
+que a linha atravessasse a tela inteira e o conteúdo ficasse centrado, e
+conferi em 1920px e em 375px. Lição: código gerado que "funciona" não é
+código verificado — passei a abrir cada tela renderizada, em duas larguras,
+antes de commitar.
+
 **Uma decisão que tomei contra a sugestão da IA:** a sugestão inicial de
 stack incluía `django-allauth` como padrão "de mercado" para autenticação. Ao
 ler o escopo do teste, percebi que ele resolve social login, verificação de
 e-mail e múltiplos provedores — nada disso pedido — e troquei pelo auth
 nativo do Django, para não carregar configuração que eu não conseguiria
 explicar inteira na entrevista (decisão detalhada acima).
-
-<!--
-Preencher à mão: "uma vez em que a IA te deu algo ruim ou errado" precisa ser
-um episódio real, específico o bastante para eu defender em voz alta na
-entrevista — não escrevo isso por você porque só você sabe qual foi. Se não
-tiver anotado, revise os módulos M1–M10 (código gerado, sugestões descartadas,
-bugs que a IA introduziu e você corrigiu) e registre aqui: o que era, como
-percebeu, o que fez no lugar.
--->
 
 ## M6 — Desativar `Experiencia` em vez de deletar
 
