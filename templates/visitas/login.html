@@ -4,20 +4,20 @@
 
 {% block conteudo %}
 <section class="px-6 py-12 max-w-sm">
-  <h1 class="font-display text-[28px] leading-tight">Entrar</h1>
+  <h1 class="titulo text-[26px] leading-tight">Entrar</h1>
 
   <form method="post" class="mt-6 space-y-6">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
-      <p class="text-[14px] text-[#8A3B2A]">{{ form.non_field_errors.0 }}</p>
+      <p class="text-[14px] text-[#D9705F]">{{ form.non_field_errors.0 }}</p>
     {% endif %}
 
     <div>
       <label for="{{ form.username.id_for_label }}" class="block text-[14px] mb-1">Usuário</label>
       <input
         type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}"
-        class="w-full border border-barrica bg-papel px-3 py-2 rounded-rotulo focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+        class="w-full border border-filete bg-aco px-3 py-2 rounded-maquina focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
         required autofocus
       >
     </div>
@@ -26,14 +26,14 @@
       <label for="{{ form.password.id_for_label }}" class="block text-[14px] mb-1">Senha</label>
       <input
         type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}"
-        class="w-full border border-barrica bg-papel px-3 py-2 rounded-rotulo focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+        class="w-full border border-filete bg-aco px-3 py-2 rounded-maquina focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
         required
       >
     </div>
 
     <button
       type="submit"
-      class="px-6 py-3 bg-cobre text-papel rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      class="px-6 py-3 bg-cobre text-vapor rounded-maquina hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
     >
       Entrar
     </button>

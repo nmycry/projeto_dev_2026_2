@@ -5,40 +5,43 @@
 {% block conteudo_painel %}
 <section class="px-6 py-10">
   <div class="flex items-center justify-between">
-    <h1 class="font-display text-[28px] leading-tight">Experiências</h1>
+    <h1 class="titulo text-[26px] leading-tight">Experiências</h1>
     <a
       href="{% url 'visitas:experiencia_create' %}"
-      class="bg-cobre text-papel px-4 py-2 rounded-rotulo focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      class="bg-cobre text-vapor px-4 py-2 rounded-maquina focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
     >
       + Nova experiência
     </a>
   </div>
 
   {% if not experiencias %}
-    <p class="mt-12 text-cana">Nenhuma experiência cadastrada ainda. Crie a primeira para ela aparecer na home pública.</p>
+    <div class="mt-12 flex items-start gap-4">
+      {% include "visitas/painel/_icone_alambique.html" %}
+      <p class="text-nevoa">Nenhuma experiência cadastrada ainda. Crie a primeira para ela aparecer na home pública.</p>
+    </div>
   {% else %}
     <div class="mt-8 overflow-x-auto">
       <table class="w-full text-[14px] border-collapse">
         <thead>
-          <tr class="border-b border-barrica text-left">
-            <th class="py-2 pr-4">Título</th>
-            <th class="py-2 pr-4 text-right">Duração</th>
-            <th class="py-2 pr-4 text-right">Preço</th>
-            <th class="py-2 pr-4">Status</th>
-            <th class="py-2 pr-4 text-right">Ação</th>
+          <tr class="border-b border-filete text-left">
+            <th class="py-2 pr-4 text-nevoa text-[12px] font-normal">Título</th>
+            <th class="py-2 pr-4 text-right text-nevoa text-[12px] font-normal">Duração</th>
+            <th class="py-2 pr-4 text-right text-nevoa text-[12px] font-normal">Preço</th>
+            <th class="py-2 pr-4 text-nevoa text-[12px] font-normal">Status</th>
+            <th class="py-2 pr-4 text-right text-nevoa text-[12px] font-normal">Ação</th>
           </tr>
         </thead>
         <tbody>
           {% for experiencia in experiencias %}
-          <tr class="border-b border-barrica/40 hover:bg-cana/10">
+          <tr class="border-b border-filete hover:bg-aco">
             <td class="py-2 pr-4">{{ experiencia.titulo }}</td>
-            <td class="py-2 pr-4 text-right whitespace-nowrap">{{ experiencia.duracao_minutos }} min</td>
-            <td class="py-2 pr-4 text-right whitespace-nowrap">R$ {{ experiencia.preco }}</td>
+            <td class="py-2 pr-4 text-right whitespace-nowrap medida">{{ experiencia.duracao_minutos }} min</td>
+            <td class="py-2 pr-4 text-right whitespace-nowrap medida">R$ {{ experiencia.preco }}</td>
             <td class="py-2 pr-4">
               {% if experiencia.ativa %}
-                <span class="inline-block rounded-full px-3 py-1 bg-[#DDE5CE] text-[#3F5426]">ativa</span>
+                <span class="inline-block rounded-maquina border px-3 py-1 bg-aco border-[#7FC9A0] text-[#7FC9A0]">ativa</span>
               {% else %}
-                <span class="inline-block rounded-full px-3 py-1 bg-[#EFDAD5] text-[#8A3B2A]">inativa</span>
+                <span class="inline-block rounded-maquina border px-3 py-1 bg-aco border-[#D9705F] text-[#D9705F]">inativa</span>
               {% endif %}
             </td>
             <td class="py-2 pr-4 text-right">

@@ -6,52 +6,52 @@
 <section class="px-6 py-10 max-w-2xl">
   <a href="{% url 'visitas:visita_list' %}" class="text-[14px] hover:text-cobre">&#9668; Voltar à listagem</a>
 
-  <h1 class="font-display text-[28px] leading-tight mt-4">{{ visita.nome }}</h1>
+  <h1 class="titulo text-[26px] leading-tight mt-4">{{ visita.nome }}</h1>
 
-  <dl class="mt-6 divide-y divide-barrica/40 border-t border-b border-barrica text-[14px]">
+  <dl class="mt-6 divide-y divide-filete border-t border-b border-filete text-[14px]">
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Status</dt>
+      <dt class="text-nevoa">Status</dt>
       <dd>{% include "visitas/painel/_status_badge.html" %}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">E-mail</dt>
+      <dt class="text-nevoa">E-mail</dt>
       <dd>{{ visita.email }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Telefone</dt>
-      <dd>{{ visita.telefone|default:"—" }}</dd>
+      <dt class="text-nevoa">Telefone</dt>
+      <dd class="medida">{{ visita.telefone|default:"—" }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Data</dt>
-      <dd>{{ visita.data|date:"d/m/Y" }}</dd>
+      <dt class="text-nevoa">Data</dt>
+      <dd class="medida">{{ visita.data|date:"d/m/Y" }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Horário</dt>
-      <dd>{{ visita.horario|time:"H:i" }}</dd>
+      <dt class="text-nevoa">Horário</dt>
+      <dd class="medida">{{ visita.horario|time:"H:i" }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Pessoas</dt>
-      <dd>{{ visita.num_pessoas }}</dd>
+      <dt class="text-nevoa">Pessoas</dt>
+      <dd class="medida">{{ visita.num_pessoas }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Observações</dt>
+      <dt class="text-nevoa">Observações</dt>
       <dd class="text-right max-w-[60%]">{{ visita.observacoes|default:"—" }}</dd>
     </div>
   </dl>
 
-  <h2 class="font-display text-[20px] leading-tight mt-10">Experiência</h2>
-  <dl class="mt-4 divide-y divide-barrica/40 border-t border-b border-barrica text-[14px]">
+  <h2 class="titulo text-[20px] leading-tight mt-10">Experiência</h2>
+  <dl class="mt-4 divide-y divide-filete border-t border-b border-filete text-[14px]">
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Título</dt>
+      <dt class="text-nevoa">Título</dt>
       <dd>{{ visita.experiencia.titulo }}</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Duração</dt>
-      <dd>{{ visita.experiencia.duracao_minutos }} minutos</dd>
+      <dt class="text-nevoa">Duração</dt>
+      <dd class="medida">{{ visita.experiencia.duracao_minutos }} minutos</dd>
     </div>
     <div class="flex justify-between py-3">
-      <dt class="text-cana">Preço</dt>
-      <dd>R$ {{ visita.experiencia.preco }}</dd>
+      <dt class="text-nevoa">Preço</dt>
+      <dd class="medida">R$ {{ visita.experiencia.preco }}</dd>
     </div>
   </dl>
 </section>

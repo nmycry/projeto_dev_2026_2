@@ -6,21 +6,26 @@
   <title>{% block titulo %}Alambique Sertão{% endblock %}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">
     @theme {
-      --color-garrafa: #16241E;
-      --color-papel:   #E8E9E1;
-      --color-cobre:   #A8642A;
-      --color-cana:    #7C8F5A;
-      --color-barrica: #6B4A2E;
+      --color-grafite: #0E1113;
+      --color-aco:     #171B1E;
+      --color-vapor:   #E6E7E4;
+      --color-nevoa:   #78848A;
+      --color-cobre:   #C87A3F;
+      --color-filete:  #232A2E;
 
-      --font-display: "Bodoni Moda", serif;
-      --font-corpo:   Archivo, system-ui, sans-serif;
+      --font-corpo: Archivo, system-ui, sans-serif;
+      --font-mono:  "JetBrains Mono", ui-monospace, monospace;
 
-      --radius-rotulo: 2px;
+      --radius-maquina: 2px;
     }
+    /* largura expandida do Archivo para títulos */
+    .titulo { font-family: var(--font-corpo); font-variation-settings: "wdth" 118; letter-spacing: -0.02em; }
+    /* dígitos tabulares em toda medida */
+    .medida { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   </style>
 
   <style>
@@ -30,8 +35,8 @@
       }
     }
     @keyframes destaque-status {
-      from { background-color: color-mix(in srgb, var(--color-cana) 20%, transparent); }
-      to { background-color: transparent; }
+      from { outline: 1px solid var(--color-cobre); }
+      to { outline: 1px solid transparent; }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/htmx.org@2"></script>
@@ -44,8 +49,8 @@
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </head>
-<body class="bg-papel text-garrafa font-corpo" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <header class="flex items-center justify-between px-6 py-4 border-b border-barrica">
+<body class="bg-grafite text-vapor font-corpo" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <header class="flex items-center justify-between px-6 py-4 border-b border-filete">
     <a href="{% url 'visitas:home' %}" class="font-medium tracking-tight">Alambique Sertão</a>
     <nav>
       <a href="{% url 'visitas:painel_home' %}" class="text-sm hover:text-cobre">Painel</a>
@@ -56,7 +61,7 @@
     {% block conteudo %}{% endblock %}
   </main>
 
-  <footer class="px-6 py-8 text-sm border-t border-barrica">
+  <footer class="px-6 py-8 text-sm text-nevoa border-t border-filete">
     Alambique Sertão &middot; Salinas, MG
   </footer>
 </body>

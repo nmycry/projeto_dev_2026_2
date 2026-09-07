@@ -4,7 +4,7 @@ from django import forms
 
 from .models import Experiencia, Visita
 
-CAMPO_TEXTO = 'w-full border border-barrica bg-papel px-3 py-2 rounded-rotulo focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre'
+CAMPO_TEXTO = 'w-full border border-filete bg-aco px-3 py-2 rounded-maquina focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre'
 
 
 class VisitaForm(forms.ModelForm):

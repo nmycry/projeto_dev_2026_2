@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load visitas_extras %}
 
 {% block titulo %}Alambique Sertão — visita guiada e degustação{% endblock %}
 
@@ -8,25 +9,31 @@
   class="relative flex items-end min-h-[560px] bg-cover bg-center"
   style="background-image: url('{% static "img/alambique-hero.jpg" %}');"
 >
-  <div class="absolute inset-0 bg-garrafa/60"></div>
+  <div class="absolute inset-0 bg-grafite/70"></div>
   <div class="relative px-6 py-12 max-w-2xl">
-    <h1 class="font-display text-[46px] md:text-[62px] leading-none tracking-tight text-papel">
+    <h1 class="titulo text-[48px] md:text-[68px] leading-none tracking-tight text-vapor">
       Alambique Sertão
     </h1>
-    <p class="mt-4 text-papel text-[20px]">
+    <p class="mt-4 text-vapor text-[20px]">
       Visita guiada e degustação de cachaça artesanal em Salinas, MG.
     </p>
+    <div class="mt-6 medida text-[14px] text-vapor flex flex-wrap items-center gap-x-4 gap-y-2">
+      <span>40,2% ABV</span>
+      <span class="border-l border-filete pl-4">{{ experiencias|duracao_media|default:"—" }} min de visita</span>
+      <span class="border-l border-filete pl-4">{{ experiencias.count }} experiências</span>
+      <span class="border-l border-filete pl-4">{{ experiencias|capacidade_total|default:"—" }} vagas/horário</span>
+    </div>
     <a
       href="#formulario"
-      class="inline-block mt-8 px-6 py-3 bg-cobre text-papel rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-papel"
+      class="inline-block mt-8 px-6 py-3 border border-cobre text-cobre rounded-maquina hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
     >
       Reservar visita
     </a>
   </div>
 </section>
 
-<section class="px-6 py-12 max-w-2xl border-t border-barrica">
-  <h2 class="font-display text-[34px] leading-tight">A casa</h2>
+<section class="px-6 py-12 max-w-2xl border-t border-filete">
+  <h2 class="titulo text-[34px] leading-tight">A casa</h2>
   <p class="mt-4 leading-[1.6]">
     O alambique fica no norte de Minas há três gerações da mesma família,
     entre canaviais que sobem a serra de Salinas. A cana é cortada e moída no
@@ -35,39 +42,39 @@
   </p>
 </section>
 
-<section class="px-6 py-12 max-w-2xl border-t border-barrica">
-  <h2 class="font-display text-[34px] leading-tight">Como funciona a visita</h2>
+<section class="px-6 py-12 max-w-2xl border-t border-filete">
+  <h2 class="titulo text-[34px] leading-tight">Como funciona a visita</h2>
   <ol class="mt-6 space-y-4 leading-[1.6]">
-    <li><span class="font-medium">1.</span> Chegada e recepção, com um copo de cana in natura</li>
-    <li><span class="font-medium">2.</span> Caminhada pelo canavial e pelo alambique em funcionamento</li>
-    <li><span class="font-medium">3.</span> Degustação guiada das cachaças da casa</li>
-    <li><span class="font-medium">4.</span> Loja, para levar uma garrafa pra casa</li>
+    <li><span class="medida text-cobre text-[26px]">1.</span> Chegada e recepção, com um copo de cana in natura</li>
+    <li><span class="medida text-cobre text-[26px]">2.</span> Caminhada pelo canavial e pelo alambique em funcionamento</li>
+    <li><span class="medida text-cobre text-[26px]">3.</span> Degustação guiada das cachaças da casa</li>
+    <li><span class="medida text-cobre text-[26px]">4.</span> Loja, para levar uma garrafa pra casa</li>
   </ol>
 </section>
 
-<section class="px-6 py-12 border-t border-barrica">
-  <h2 class="font-display text-[34px] leading-tight px-0">Experiências</h2>
+<section class="px-6 py-12 border-t border-filete">
+  <h2 class="titulo text-[34px] leading-tight px-0">Experiências</h2>
   <div class="mt-6 grid gap-6 md:grid-cols-3 max-w-5xl">
     {% for experiencia in experiencias %}
-    <div class="border border-barrica rounded-rotulo p-6">
+    <div class="border border-filete rounded-maquina p-6">
       <h3 class="font-medium text-[20px]">{{ experiencia.titulo }}</h3>
-      <p class="mt-2 text-[14px] leading-[1.6]">{{ experiencia.descricao }}</p>
-      <p class="mt-4 text-[16px]">R$ {{ experiencia.preco }} &middot; {{ experiencia.duracao_minutos }} min</p>
+      <p class="mt-2 text-[14px] leading-[1.6] text-nevoa">{{ experiencia.descricao }}</p>
+      <p class="mt-4 text-[16px] medida">R$ {{ experiencia.preco }} &middot; {{ experiencia.duracao_minutos }} min</p>
     </div>
     {% endfor %}
   </div>
 </section>
 
-<section class="px-6 py-12 max-w-2xl border-t border-barrica">
-  <h2 class="font-display text-[34px] leading-tight">Onde fica e quando abre</h2>
+<section class="px-6 py-12 max-w-2xl border-t border-filete">
+  <h2 class="titulo text-[34px] leading-tight">Onde fica e quando abre</h2>
   <p class="mt-4 leading-[1.6]">
     Estrada da Serra, km 4 &mdash; zona rural de Salinas, MG.<br>
     Visitas de terça a domingo, das 9h às 16h.
   </p>
 </section>
 
-<section id="formulario" class="px-6 py-12 max-w-2xl border-t border-barrica">
-  <h2 class="font-display text-[34px] leading-tight">Reservar visita</h2>
+<section id="formulario" class="px-6 py-12 max-w-2xl border-t border-filete">
+  <h2 class="titulo text-[34px] leading-tight">Reservar visita</h2>
 
   <form method="post" class="mt-6 space-y-6">
     {% csrf_token %}
@@ -76,7 +83,7 @@
       <label for="{{ form.nome.id_for_label }}" class="block text-[14px] mb-1">{{ form.nome.label }}</label>
       {{ form.nome }}
       {% if form.nome.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.nome.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.nome.errors.0 }}</p>
       {% endif %}
     </div>
 
@@ -84,7 +91,7 @@
       <label for="{{ form.email.id_for_label }}" class="block text-[14px] mb-1">{{ form.email.label }}</label>
       {{ form.email }}
       {% if form.email.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.email.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.email.errors.0 }}</p>
       {% endif %}
     </div>
 
@@ -92,7 +99,7 @@
       <label for="{{ form.telefone.id_for_label }}" class="block text-[14px] mb-1">{{ form.telefone.label }}</label>
       {{ form.telefone }}
       {% if form.telefone.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.telefone.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.telefone.errors.0 }}</p>
       {% endif %}
     </div>
 
@@ -100,7 +107,7 @@
       <label for="{{ form.experiencia.id_for_label }}" class="block text-[14px] mb-1">{{ form.experiencia.label }}</label>
       {{ form.experiencia }}
       {% if form.experiencia.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.experiencia.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.experiencia.errors.0 }}</p>
       {% endif %}
     </div>
 
@@ -109,7 +116,7 @@
         <label for="{{ form.data.id_for_label }}" class="block text-[14px] mb-1">{{ form.data.label }}</label>
         {{ form.data }}
         {% if form.data.errors %}
-          <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.data.errors.0 }}</p>
+          <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.data.errors.0 }}</p>
         {% endif %}
       </div>
 
@@ -117,7 +124,7 @@
         <label for="{{ form.horario.id_for_label }}" class="block text-[14px] mb-1">{{ form.horario.label }}</label>
         {{ form.horario }}
         {% if form.horario.errors %}
-          <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.horario.errors.0 }}</p>
+          <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.horario.errors.0 }}</p>
         {% endif %}
       </div>
     </div>
@@ -126,7 +133,7 @@
       <label for="{{ form.num_pessoas.id_for_label }}" class="block text-[14px] mb-1">{{ form.num_pessoas.label }}</label>
       {{ form.num_pessoas }}
       {% if form.num_pessoas.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.num_pessoas.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.num_pessoas.errors.0 }}</p>
       {% endif %}
     </div>
 
@@ -134,13 +141,13 @@
       <label for="{{ form.observacoes.id_for_label }}" class="block text-[14px] mb-1">{{ form.observacoes.label }}</label>
       {{ form.observacoes }}
       {% if form.observacoes.errors %}
-        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.observacoes.errors.0 }}</p>
+        <p class="mt-1 text-[14px] text-[#D9705F]">{{ form.observacoes.errors.0 }}</p>
       {% endif %}
     </div>
 
     <button
       type="submit"
-      class="px-6 py-3 bg-cobre text-papel rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      class="px-6 py-3 bg-cobre text-vapor rounded-maquina hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
     >
       Reservar visita
     </button>
