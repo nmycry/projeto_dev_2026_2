@@ -1,0 +1,92 @@
+{% extends "visitas/painel/base_painel.html" %}
+
+{% block titulo %}Visitas — Painel{% endblock %}
+
+{% block conteudo_painel %}
+<section class="px-6 py-10">
+  <h1 class="font-display text-[28px] leading-tight">Visitas</h1>
+
+  <form method="get" class="mt-6 flex flex-wrap gap-3 text-[14px]">
+    <input
+      type="text"
+      name="q"
+      value="{{ q_atual }}"
+      placeholder="Buscar por nome ou e-mail"
+      class="border border-barrica rounded-[--radius-rotulo] px-3 py-2 flex-1 min-w-[220px] bg-papel focus-visible:outline focus-visible:outline-2 focus-visible:outline-cobre"
+    >
+    <select
+      name="status"
+      class="border border-barrica rounded-[--radius-rotulo] px-3 py-2 bg-papel focus-visible:outline focus-visible:outline-2 focus-visible:outline-cobre"
+    >
+      <option value="" {% if not status_atual %}selected{% endif %}>Todos os status</option>
+      {% for valor, rotulo in status_choices %}
+        <option value="{{ valor }}" {% if status_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+      {% endfor %}
+    </select>
+    <button
+      type="submit"
+      class="bg-cobre text-papel px-4 py-2 rounded-[--radius-rotulo] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+    >
+      Filtrar
+    </button>
+  </form>
+
+  {% if not existe_visita %}
+    <p class="mt-12 text-cana">Nenhuma visita agendada ainda. Assim que alguém agendar pelo formulário público, ela aparece aqui.</p>
+  {% elif not visitas %}
+    <p class="mt-12 text-cana">Nenhuma visita encontrada para esse filtro. Tente outro nome, e-mail ou status.</p>
+  {% else %}
+    <div class="mt-8 overflow-x-auto">
+      <table class="w-full text-[14px] border-collapse">
+        <thead>
+          <tr class="border-b border-barrica text-left">
+            <th class="py-2 pr-4">Data</th>
+            <th class="py-2 pr-4">Horário</th>
+            <th class="py-2 pr-4">Nome</th>
+            <th class="py-2 pr-4">Experiência</th>
+            <th class="py-2 pr-4 text-right">Pessoas</th>
+            <th class="py-2 pr-4">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for visita in visitas %}
+          <tr
+            class="border-b border-barrica/40 cursor-pointer hover:bg-cana/10"
+            onclick="window.location='{% url 'visitas:visita_detail' visita.pk %}'"
+          >
+            <td class="py-2 pr-4 whitespace-nowrap">{{ visita.data|date:"d/m/Y" }}</td>
+            <td class="py-2 pr-4 whitespace-nowrap">{{ visita.horario|time:"H:i" }}</td>
+            <td class="py-2 pr-4">
+              <a href="{% url 'visitas:visita_detail' visita.pk %}" class="hover:text-cobre">{{ visita.nome }}</a>
+            </td>
+            <td class="py-2 pr-4">{{ visita.experiencia.titulo }}</td>
+            <td class="py-2 pr-4 text-right">{{ visita.num_pessoas }}</td>
+            <td class="py-2 pr-4">
+              {% if visita.status == 'PENDENTE' %}
+                <span class="inline-block rounded-full px-3 py-1 bg-[#F0E4CE] text-[#7A5518]">pendente</span>
+              {% elif visita.status == 'CONFIRMADA' %}
+                <span class="inline-block rounded-full px-3 py-1 bg-[#DDE5CE] text-[#3F5426]">confirmada</span>
+              {% else %}
+                <span class="inline-block rounded-full px-3 py-1 bg-[#EFDAD5] text-[#8A3B2A]">cancelada</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-6 flex items-center gap-4 text-[14px]">
+      {% if page_obj.has_previous %}
+        <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page_obj.previous_page_number }}" class="hover:text-cobre">&#9668; anterior</a>
+      {% endif %}
+      <span class="text-cana">página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page_obj.next_page_number }}" class="hover:text-cobre">próxima &#9658;</a>
+      {% endif %}
+    </nav>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

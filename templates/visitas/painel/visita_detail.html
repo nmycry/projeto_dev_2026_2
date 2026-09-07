@@ -1,0 +1,66 @@
+{% extends "visitas/painel/base_painel.html" %}
+
+{% block titulo %}{{ visita.nome }} — Painel{% endblock %}
+
+{% block conteudo_painel %}
+<section class="px-6 py-10 max-w-2xl">
+  <a href="{% url 'visitas:visita_list' %}" class="text-[14px] hover:text-cobre">&#9668; Voltar à listagem</a>
+
+  <h1 class="font-display text-[28px] leading-tight mt-4">{{ visita.nome }}</h1>
+
+  <dl class="mt-6 divide-y divide-barrica/40 border-t border-b border-barrica text-[14px]">
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Status</dt>
+      <dd>
+        {% if visita.status == 'PENDENTE' %}
+          <span class="inline-block rounded-full px-3 py-1 bg-[#F0E4CE] text-[#7A5518]">pendente</span>
+        {% elif visita.status == 'CONFIRMADA' %}
+          <span class="inline-block rounded-full px-3 py-1 bg-[#DDE5CE] text-[#3F5426]">confirmada</span>
+        {% else %}
+          <span class="inline-block rounded-full px-3 py-1 bg-[#EFDAD5] text-[#8A3B2A]">cancelada</span>
+        {% endif %}
+      </dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">E-mail</dt>
+      <dd>{{ visita.email }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Telefone</dt>
+      <dd>{{ visita.telefone|default:"—" }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Data</dt>
+      <dd>{{ visita.data|date:"d/m/Y" }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Horário</dt>
+      <dd>{{ visita.horario|time:"H:i" }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Pessoas</dt>
+      <dd>{{ visita.num_pessoas }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Observações</dt>
+      <dd class="text-right max-w-[60%]">{{ visita.observacoes|default:"—" }}</dd>
+    </div>
+  </dl>
+
+  <h2 class="font-display text-[20px] leading-tight mt-10">Experiência</h2>
+  <dl class="mt-4 divide-y divide-barrica/40 border-t border-b border-barrica text-[14px]">
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Título</dt>
+      <dd>{{ visita.experiencia.titulo }}</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Duração</dt>
+      <dd>{{ visita.experiencia.duracao_minutos }} minutos</dd>
+    </div>
+    <div class="flex justify-between py-3">
+      <dt class="text-cana">Preço</dt>
+      <dd>R$ {{ visita.experiencia.preco }}</dd>
+    </div>
+  </dl>
+</section>
+{% endblock %}
