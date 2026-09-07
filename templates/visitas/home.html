@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Alambique Sertão — visita guiada e degustação{% endblock %}
+
+{% block conteudo %}
+<section
+  class="relative flex items-end min-h-[560px] bg-cover bg-center"
+  style="background-image: url('{% static "img/alambique-hero.jpg" %}');"
+>
+  <div class="absolute inset-0 bg-garrafa/60"></div>
+  <div class="relative px-6 py-12 max-w-2xl">
+    <h1 class="font-display text-[46px] md:text-[62px] leading-none tracking-tight text-papel">
+      Alambique Sertão
+    </h1>
+    <p class="mt-4 text-papel text-[20px]">
+      Visita guiada e degustação de cachaça artesanal em Salinas, MG.
+    </p>
+    <a
+      href="#"
+      class="inline-block mt-8 px-6 py-3 bg-cobre text-papel rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-papel"
+    >
+      Reservar visita
+    </a>
+  </div>
+</section>
+{% endblock %}

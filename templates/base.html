@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Alambique Sertão{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-garrafa: #16241E;
+      --color-papel:   #E8E9E1;
+      --color-cobre:   #A8642A;
+      --color-cana:    #7C8F5A;
+      --color-barrica: #6B4A2E;
+
+      --font-display: "Bodoni Moda", serif;
+      --font-corpo:   Archivo, system-ui, sans-serif;
+
+      --radius-rotulo: 2px;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+</head>
+<body class="bg-papel text-garrafa font-corpo">
+  <header class="flex items-center justify-between px-6 py-4 border-b border-barrica">
+    <a href="{% url 'visitas:home' %}" class="font-medium tracking-tight">Alambique Sertão</a>
+    <nav>
+      <a href="{% url 'admin:index' %}" class="text-sm hover:text-cobre">Painel</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="px-6 py-8 text-sm border-t border-barrica">
+    Alambique Sertão &middot; Salinas, MG
+  </footer>
+</body>
+</html>
