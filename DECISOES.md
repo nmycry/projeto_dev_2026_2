@@ -87,3 +87,50 @@ de cores testados. O contraste `vapor`/`grafite` já é o maior disponível na
 paleta; o resto do problema (reflexo de sol na tela do aparelho) é uma
 limitação de hardware que nenhuma escolha de CSS resolve. Assumido como
 trade-off consciente, registrado aqui em vez de descoberto na entrevista.
+
+## M9 — Link de acompanhamento do visitante
+
+**Contexto:** o formulário público (M3) não devolve nenhum jeito de o
+visitante saber se a visita foi confirmada, nem de desistir sem ligar para o
+alambique — uma vaga fantasma persiste até alguém do painel perceber e
+cancelar manualmente.
+
+**Decisão — prazo de cancelamento de 24h antes do horário agendado:**
+`Visita.HORAS_LIMITE_CANCELAMENTO = 24`, verificado em
+`pode_cancelar_pelo_visitante()` comparando `timezone.now()` com o
+`datetime` combinado de `data` + `horario`.
+
+**Por quê:** é o próprio exemplo citado na spec do módulo e dá ao alambique
+uma janela mínima para remanejar a vaga sem impor uma regra tão rígida que
+recuse cancelamentos de última hora com uma antecedência maior — não existe
+critério de negócio informado que justifique um número diferente.
+
+**Decisão — admin não é avisado do cancelamento:** não implementado.
+
+**Por quê:** não existe backend de e-mail configurado em nenhum lugar do
+projeto (`settings.py` sem `EMAIL_*`, `.env.example` sem chave de e-mail) —
+criar esse canal só para este módulo seria adicionar infraestrutura nova fora
+do escopo pedido. O cancelamento já fica visível no painel (campo
+`cancelada_por_visitante`, mostrado em `visita_detail.html` e na listagem),
+que é o canal que já existe e que o responsável já consulta.
+
+**Decisão — cancelamento de visita já `CONFIRMADA` é permitido pelo
+visitante:** sim, enquanto dentro do prazo.
+
+**Por quê:** `TRANSICOES_PERMITIDAS` (M6) já modela
+`CONFIRMADA -> CANCELADA` como transição válida, e é o cenário mais comum na
+prática — visita confirmada que precisa ser desmarcada depois. Negar isso só
+ao visitante, mantendo a mesma transição liberada para o painel, criaria uma
+inconsistência sem motivo.
+
+**Decisão — UUID no lugar do `id` sequencial na URL:** `token` é
+`UUIDField(default=uuid.uuid4, unique=True, db_index=True)`, gerado sozinho
+por visita.
+
+**Por quê:** um `id` sequencial deixaria qualquer pessoa adivinhar
+`/minha-visita/43/` e ver nome, e-mail e telefone de outro visitante trocando
+um número na URL. UUID4 tem 122 bits de entropia — não é enumerável por
+tentativa. O modelo de ameaça aqui é baixo risco: o pior cenário é o próprio
+link vazar (encaminhado, capturado num proxy), expondo só a visita do dono do
+link — não um sistema de pagamento nem dado de terceiros — o que torna a
+solução proporcional ao caso sem precisar de autenticação para esta tela.

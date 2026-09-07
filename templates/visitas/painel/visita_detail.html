@@ -12,7 +12,12 @@
   <dl class="mt-6 divide-y divide-filete border-t border-b border-filete text-[14px]">
     <div class="flex justify-between py-3">
       <dt class="text-nevoa">Status</dt>
-      <dd>{% include "visitas/painel/_status_badge.html" %}</dd>
+      <dd>
+        {% include "visitas/painel/_status_badge.html" %}
+        {% if visita.cancelada_por_visitante %}
+          <span class="text-[12px] text-nevoa">(cancelada pelo visitante)</span>
+        {% endif %}
+      </dd>
     </div>
     <div class="flex justify-between py-3">
       <dt class="text-nevoa">E-mail</dt>

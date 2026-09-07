@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minha visita — Alambique Sertão{% endblock %}
+
+{% block conteudo %}
+<section class="px-6 py-12 max-w-2xl">
+  <h1 class="titulo text-[48px] leading-tight">{{ visita.nome }}</h1>
+
+  {% if messages %}
+    <ul class="mt-4 space-y-2 text-[14px]">
+      {% for message in messages %}
+        <li class="border-l-2 border-filete pl-3 {% if message.tags == 'error' %}text-[#D9705F]{% else %}text-[#7FC9A0]{% endif %}">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <p class="mt-4 leading-[1.6]">
+    Sua visita está com status
+    {% include "visitas/painel/_status_badge.html" %}
+  </p>
+
+  <dl class="mt-8 space-y-3 text-[16px]">
+    <div class="flex justify-between border-b border-filete pb-2">
+      <dt>Experiência</dt>
+      <dd>{{ visita.experiencia.titulo }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-filete pb-2">
+      <dt>Data</dt>
+      <dd class="medida">{{ visita.data|date:"d/m/Y" }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-filete pb-2">
+      <dt>Horário</dt>
+      <dd class="medida">{{ visita.horario|time:"H:i" }}</dd>
+    </div>
+    <div class="flex justify-between border-b border-filete pb-2">
+      <dt>Pessoas</dt>
+      <dd class="medida">{{ visita.num_pessoas }}</dd>
+    </div>
+  </dl>
+
+  {% if visita.status == 'CANCELADA' %}
+    <p class="mt-8 text-nevoa">Essa visita já está cancelada.</p>
+  {% elif visita.pode_cancelar_pelo_visitante %}
+    <form method="post" class="mt-8">
+      {% csrf_token %}
+      <button
+        type="submit"
+        class="px-6 py-3 border border-filete rounded-maquina hover:border-cobre hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      >
+        Cancelar visita
+      </button>
+    </form>
+  {% else %}
+    <p class="mt-8 text-nevoa">
+      Essa visita não pode mais ser cancelada por aqui — o prazo é de
+      {{ visita.HORAS_LIMITE_CANCELAMENTO }}h antes do horário agendado.
+    </p>
+  {% endif %}
+</section>
+{% endblock %}

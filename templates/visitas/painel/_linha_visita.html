@@ -9,7 +9,12 @@
   </td>
   <td class="py-2 pr-4">{{ visita.experiencia.titulo }}</td>
   <td class="py-2 pr-4 text-right medida">{{ visita.num_pessoas }}</td>
-  <td class="py-2 pr-4">{% include "visitas/painel/_status_badge.html" %}</td>
+  <td class="py-2 pr-4">
+    {% include "visitas/painel/_status_badge.html" %}
+    {% if visita.cancelada_por_visitante %}
+      <span class="text-[12px] text-nevoa">(pelo visitante)</span>
+    {% endif %}
+  </td>
   <td class="py-2 pr-4 text-right whitespace-nowrap">
     {% if visita.status == 'PENDENTE' %}
       <form
