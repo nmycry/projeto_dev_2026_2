@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="border-b border-barrica px-6 py-3 flex items-center justify-between text-[14px]">
+  <span>{{ user.get_username }}</span>
+  <form method="post" action="{% url 'visitas:logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
+      Sair
+    </button>
+  </form>
+</div>
+
+{% block conteudo_painel %}{% endblock %}
+{% endblock %}

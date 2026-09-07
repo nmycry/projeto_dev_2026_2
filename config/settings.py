@@ -128,6 +128,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+
+# Autenticação
+# https://docs.djangoproject.com/en/5.2/topics/auth/default/
+
+LOGIN_URL = 'visitas:login'
+LOGIN_REDIRECT_URL = 'visitas:painel_home'
+LOGOUT_REDIRECT_URL = 'visitas:home'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

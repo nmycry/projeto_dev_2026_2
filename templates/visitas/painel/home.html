@@ -1,0 +1,10 @@
+{% extends "visitas/painel/base_painel.html" %}
+
+{% block titulo %}Painel — Alambique Sertão{% endblock %}
+
+{% block conteudo_painel %}
+<section class="px-6 py-12">
+  <h1 class="font-display text-[28px] leading-tight">Painel</h1>
+  <p class="mt-4">Olá, {{ user.get_username }}.</p>
+</section>
+{% endblock %}
