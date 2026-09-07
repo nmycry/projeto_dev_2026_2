@@ -67,3 +67,23 @@ não um e-commerce de alta concorrência — o risco só se materializa quando d
 pessoas tentam pegar a última vaga do mesmo horário no mesmo instante. Nenhum
 critério de aceite do M7 testa concorrência. Fica registrado aqui como
 limitação conhecida e consciente, não como esquecimento.
+
+## M8 — Tela escura no roteiro de hoje, mesmo sob sol direto
+
+**Contexto:** o `/painel/hoje/` é a única tela do projeto pensada para ser
+usada fora de uma mesa — no celular, na mão, de manhã, possivelmente com sol
+batendo na tela. Tela escura reflete mais luz ambiente que tela clara, o que é
+uma desvantagem real desse cenário específico.
+
+**Decisão:** manter o tema escuro do projeto (`vapor` sobre `grafite`) também
+nessa tela, sem criar uma variante clara só para ela. Mitigar com contraste
+máximo (a maior razão de luminância que a paleta oferece), tipografia grande
+(`.medida` em 28px para o horário) e alvos de toque grandes (botões de
+presença em coluna, `py-4`), em vez de resolver com uma segunda paleta.
+
+**Por quê:** o projeto não tem tema claro em lugar nenhum — criar um só para
+essa tela quebraria a identidade visual e ainda exigiria manter dois conjuntos
+de cores testados. O contraste `vapor`/`grafite` já é o maior disponível na
+paleta; o resto do problema (reflexo de sol na tela do aparelho) é uma
+limitação de hardware que nenhuma escolha de CSS resolve. Assumido como
+trade-off consciente, registrado aqui em vez de descoberto na entrevista.

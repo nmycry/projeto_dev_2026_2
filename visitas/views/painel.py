@@ -1,4 +1,5 @@
 import datetime
+import itertools
 import json
 
 from django.contrib import messages
@@ -7,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 
@@ -73,6 +75,75 @@ class VisitaDetailView(PainelBaseView, DetailView):
             visita.experiencia, visita.data, visita.horario,
         )
         return contexto
+
+
+@login_required
+def roteiro_hoje(request):
+    data_str = request.GET.get('data', '')
+    try:
+        data = datetime.date.fromisoformat(data_str) if data_str else timezone.localdate()
+    except ValueError:
+        data = timezone.localdate()
+
+    visitas = Visita.objects.filter(
+        status=Visita.Status.CONFIRMADA,
+        data=data,
+    ).select_related('experiencia').order_by('horario', 'experiencia_id')
+
+    grupos = []
+    total_geral = 0
+    for (horario, _experiencia_id), visitas_do_grupo in itertools.groupby(
+        visitas, key=lambda v: (v.horario, v.experiencia_id)
+    ):
+        visitas_do_grupo = list(visitas_do_grupo)
+        total_pessoas = sum(v.num_pessoas for v in visitas_do_grupo)
+        total_geral += total_pessoas
+        grupos.append({
+            'horario': horario,
+            'experiencia': visitas_do_grupo[0].experiencia,
+            'total_pessoas': total_pessoas,
+            'visitas': visitas_do_grupo,
+        })
+
+    contexto = {
+        'data': data,
+        'data_anterior': data - datetime.timedelta(days=1),
+        'data_seguinte': data + datetime.timedelta(days=1),
+        'hoje': timezone.localdate(),
+        'grupos': grupos,
+        'total_geral': total_geral,
+    }
+    return render(request, 'visitas/painel/roteiro_hoje.html', contexto)
+
+
+@login_required
+@require_POST
+def visita_marcar_presenca(request, pk):
+    visita = get_object_or_404(
+        Visita.objects.select_related('experiencia'),
+        pk=pk,
+        status=Visita.Status.CONFIRMADA,
+    )
+    valor = request.POST.get('compareceu', '').lower()
+    mapa_presenca = {'presente': True, 'ausente': False}
+
+    if valor in mapa_presenca:
+        visita.compareceu = mapa_presenca[valor]
+        visita.save(update_fields=['compareceu', 'atualizado_em'])
+        sucesso = True
+        texto = 'Presença registrada.' if visita.compareceu else 'Marcado como não compareceu.'
+    else:
+        sucesso = False
+        texto = 'Valor de presença inválido.'
+
+    if not request.headers.get('HX-Request'):
+        (messages.success if sucesso else messages.error)(request, texto)
+        return redirect('visitas:roteiro_hoje')
+
+    resposta = render(request, 'visitas/painel/_cartao_visita_hoje.html', {'visita': visita})
+    evento = 'toast-sucesso' if sucesso else 'toast-erro'
+    resposta['HX-Trigger'] = json.dumps({evento: texto})
+    return resposta
 
 
 MENSAGENS_TRANSICAO = {

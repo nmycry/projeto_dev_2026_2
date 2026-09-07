@@ -11,6 +11,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='visitas/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('painel/', painel.PainelHomeView.as_view(), name='painel_home'),
+    path('painel/hoje/', painel.roteiro_hoje, name='roteiro_hoje'),
+    path('painel/hoje/<int:pk>/presenca/', painel.visita_marcar_presenca, name='visita_marcar_presenca'),
     path('painel/visitas/', painel.VisitaListView.as_view(), name='visita_list'),
     path('painel/visitas/<int:pk>/', painel.VisitaDetailView.as_view(), name='visita_detail'),
     path('painel/visitas/<int:pk>/status/', painel.visita_mudar_status, name='visita_mudar_status'),

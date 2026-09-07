@@ -1,0 +1,57 @@
+{% extends "visitas/painel/base_painel.html" %}
+
+{% block titulo %}Roteiro de hoje — Painel{% endblock %}
+
+{% block conteudo_painel %}
+<section class="px-4 py-8 max-w-xl mx-auto">
+  <div class="flex items-center justify-between">
+    <a
+      href="?data={{ data_anterior|date:'Y-m-d' }}"
+      class="text-[22px] px-3 py-3 hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      aria-label="Dia anterior"
+    >&#9668;</a>
+    <div class="text-center">
+      <h1 class="titulo text-[22px] leading-tight">Roteiro de hoje</h1>
+      <p class="medida text-nevoa text-[14px] mt-1">
+        {{ data|date:"d/m/Y" }}{% if data == hoje %} &middot; hoje{% endif %}
+      </p>
+    </div>
+    <a
+      href="?data={{ data_seguinte|date:'Y-m-d' }}"
+      class="text-[22px] px-3 py-3 hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      aria-label="Próximo dia"
+    >&#9658;</a>
+  </div>
+
+  {% if not grupos %}
+    <div class="mt-16 flex flex-col items-center gap-4 text-center">
+      {% include "visitas/painel/_icone_alambique.html" %}
+      <p class="text-nevoa">Nenhuma visita confirmada para hoje.</p>
+    </div>
+  {% else %}
+    <p class="mt-6 text-[14px] text-nevoa">
+      Total do dia: <span class="medida text-vapor">{{ total_geral }}</span> pessoa{{ total_geral|pluralize }}
+    </p>
+
+    <div class="mt-6 divide-y divide-filete border-t border-b border-filete">
+      {% for grupo in grupos %}
+        <div class="py-6">
+          <div class="flex items-baseline justify-between gap-4">
+            <span class="medida text-[28px]">{{ grupo.horario|time:"H:i" }}</span>
+            <span class="text-[14px] text-nevoa text-right">
+              {{ grupo.experiencia.titulo }}<br>
+              <span class="medida">{{ grupo.total_pessoas }}</span> pessoa{{ grupo.total_pessoas|pluralize }}
+            </span>
+          </div>
+
+          <div class="mt-2">
+            {% for visita in grupo.visitas %}
+              {% include "visitas/painel/_cartao_visita_hoje.html" %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

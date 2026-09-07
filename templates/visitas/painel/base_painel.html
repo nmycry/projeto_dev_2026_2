@@ -3,6 +3,7 @@
 {% block conteudo %}
 <div class="border-b border-filete px-6 py-3 flex items-center justify-between text-[14px]">
   <nav class="flex gap-6">
+    <a href="{% url 'visitas:roteiro_hoje' %}" class="hover:text-cobre {% if request.resolver_match.url_name == 'roteiro_hoje' %}text-cobre{% endif %}">Hoje</a>
     <a href="{% url 'visitas:visita_list' %}" class="hover:text-cobre {% if request.resolver_match.url_name == 'visita_list' %}text-cobre{% endif %}">Visitas</a>
     <a href="{% url 'visitas:experiencia_list' %}" class="hover:text-cobre {% if request.resolver_match.url_name == 'experiencia_list' %}text-cobre{% endif %}">Experiências</a>
   </nav>
