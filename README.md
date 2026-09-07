@@ -369,3 +369,28 @@ Vamos conversar sobre o que você construiu: por que fez de um jeito e não de o
 Por isso vale entregar código que você entende. Não porque vamos cobrar linha por linha, mas porque essa conversa é a parte mais interessante do processo, e é onde você tem mais espaço para mostrar como pensa.
 
 Boa sorte! A gente se vê na conversa.
+
+---
+
+## Testes automatizados (projeto)
+
+```
+python manage.py test
+```
+
+Os testes rodam contra um banco `test_<MYSQL_DATABASE>` que o Django cria e
+derruba a cada execução — não é o banco de desenvolvimento. Para isso, o
+usuário do MySQL precisa de privilégio de `CREATE`/`DROP DATABASE` em bancos
+`test_%`, já concedido pelo `docker/mysql/init.sql` (`GRANT ALL PRIVILEGES ON
+`test_%`.* TO 'visitas_app'@'%'`).
+
+Se `manage.py test` der erro de permissão ao criar o banco de teste,
+provavelmente o volume do MySQL já existia quando o `init.sql` foi criado (ele
+só roda na primeira inicialização do volume). Nesse caso:
+
+```
+docker compose down -v
+docker compose up -d
+```
+
+isso recria o volume do zero e reaplica o `init.sql`.
