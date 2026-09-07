@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 
+from visitas import capacidade
 from visitas.forms import ExperienciaForm
 from visitas.models import Experiencia, Visita
 
@@ -62,6 +63,16 @@ class VisitaDetailView(PainelBaseView, DetailView):
     model = Visita
     template_name = 'visitas/painel/visita_detail.html'
     queryset = Visita.objects.select_related('experiencia')
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        visita = self.object
+
+        contexto['capacidade_total'] = visita.experiencia.capacidade_por_horario
+        contexto['ocupadas'] = capacidade.pessoas_reservadas(
+            visita.experiencia, visita.data, visita.horario,
+        )
+        return contexto
 
 
 MENSAGENS_TRANSICAO = {

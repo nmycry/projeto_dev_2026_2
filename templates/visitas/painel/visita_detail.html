@@ -1,4 +1,5 @@
 {% extends "visitas/painel/base_painel.html" %}
+{% load visitas_extras %}
 
 {% block titulo %}{{ visita.nome }} — Painel{% endblock %}
 
@@ -54,5 +55,13 @@
       <dd class="medida">R$ {{ visita.experiencia.preco }}</dd>
     </div>
   </dl>
+
+  <h2 class="titulo text-[20px] leading-tight mt-10">Ocupação do horário</h2>
+  <div class="mt-4 flex gap-[2px]">
+    {% for indice in capacidade_total|intervalo %}
+      <span class="h-2 flex-1 {% if indice < ocupadas %}bg-cobre{% else %}border-t border-filete{% endif %}"></span>
+    {% endfor %}
+  </div>
+  <p class="mt-2 text-[14px] medida text-nevoa">{{ ocupadas }} de {{ capacidade_total }} vagas ocupadas nesse horário</p>
 </section>
 {% endblock %}

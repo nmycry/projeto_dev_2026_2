@@ -13,3 +13,8 @@ def duracao_media(experiencias):
 @register.filter
 def capacidade_total(experiencias):
     return experiencias.aggregate(total=Sum('capacidade_por_horario'))['total']
+
+
+@register.filter
+def intervalo(n):
+    return range(n)

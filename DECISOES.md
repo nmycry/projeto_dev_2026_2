@@ -21,3 +21,49 @@ já usado em `views/publico.py` e no `queryset` do `VisitaForm`). Ao desativar u
 experiência com visitas pendentes futuras, o painel avisa quantas existem — a
 desativação não é bloqueada, é só sinalizada, porque cancelar essas visitas é uma
 decisão humana, não automática.
+
+## M7 — Onde mora a regra de capacidade por horário
+
+**Contexto:** a trava de capacidade (soma de `num_pessoas` por `experiencia` +
+`data` + `horario`) precisa ser consultada em dois lugares sem relação entre si:
+na validação do agendamento público (`VisitaForm`) e na barra de ocupação do
+painel (`VisitaDetailView`).
+
+**Decisão:** a consulta e o cálculo de vagas moram num módulo de serviço,
+`visitas/capacidade.py`, com funções simples (`pessoas_reservadas`,
+`vagas_restantes`, `sugerir_horarios_vizinhos`). O `VisitaForm.clean()` chama
+essas funções para validar e montar a mensagem de erro; a `VisitaDetailView`
+chama a mesma função para montar a barra de ocupação.
+
+**Por quê:** colocar a regra só no `Visita.clean()` do model deslocaria uma
+consulta que soma linhas irmãs (outras visitas do mesmo slot) para dentro de um
+método de instância, que normalmente valida só os próprios campos. Colocar só
+no `VisitaForm` deixaria a `VisitaDetailView` sem acesso à mesma lógica, forçando
+duplicar a query ou o painel importar o form só para reaproveitar um pedaço
+dele. Um módulo de serviço evita as duas coisas e é testável sozinho, sem
+precisar de request nem de form. Ressalva: "camada de serviço" não é um padrão
+que o Django prescreve — é uma escolha nossa para não duplicar regra de negócio,
+não algo copiado de tutorial.
+
+## M7 — Concorrência na trava de capacidade: limitação assumida
+
+**Contexto:** a validação de capacidade é check-then-act — `vagas_restantes()`
+roda no `clean()` do form, e o `save()` acontece depois, fora de qualquer bloco
+atômico. Duas requisições simultâneas disputando o último lugar do mesmo
+horário podem, cada uma, ler "1 vaga livre" e as duas passarem, estourando a
+capacidade.
+
+**Decisão:** não implementar `transaction.atomic()` + `select_for_update()`
+agora. A opção correta seria abrir a transação na view pública, travar com
+`select_for_update()` as visitas não canceladas daquele slot, recontar dentro
+da transação e só então salvar — isso fecha a corrida, mas serializa qualquer
+escrita concorrente (agendar, cancelar, confirmar) que toque o mesmo
+`experiencia` + `data` + `horario` enquanto o lock estiver aberto, e exige
+reestruturar a view (`form.is_valid()`/`form.save()` hoje não rodam dentro de
+um bloco atômico).
+
+**Por quê aceitar a limitação:** o volume esperado é de um alambique artesanal,
+não um e-commerce de alta concorrência — o risco só se materializa quando duas
+pessoas tentam pegar a última vaga do mesmo horário no mesmo instante. Nenhum
+critério de aceite do M7 testa concorrência. Fica registrado aqui como
+limitação conhecida e consciente, não como esquecimento.

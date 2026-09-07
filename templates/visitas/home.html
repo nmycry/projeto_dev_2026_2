@@ -79,6 +79,14 @@
   <form method="post" class="mt-6 space-y-6">
     {% csrf_token %}
 
+    {% if form.non_field_errors %}
+      <div class="border border-[#D9705F] text-[#D9705F] rounded-maquina px-4 py-3 text-[14px]">
+        {% for erro in form.non_field_errors %}
+          <p>{{ erro }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div>
       <label for="{{ form.nome.id_for_label }}" class="block text-[14px] mb-1">{{ form.nome.label }}</label>
       {{ form.nome }}

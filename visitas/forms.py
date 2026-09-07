@@ -2,6 +2,7 @@ from datetime import date
 
 from django import forms
 
+from . import capacidade
 from .models import Experiencia, Visita
 
 CAMPO_TEXTO = 'w-full border border-filete bg-aco px-3 py-2 rounded-maquina focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre'
@@ -54,6 +55,27 @@ class VisitaForm(forms.ModelForm):
         if not experiencia.ativa:
             raise forms.ValidationError('Essa experiência não está mais disponível.')
         return experiencia
+
+    def clean(self):
+        cleaned_data = super().clean()
+        experiencia = cleaned_data.get('experiencia')
+        data = cleaned_data.get('data')
+        horario = cleaned_data.get('horario')
+        num_pessoas = cleaned_data.get('num_pessoas')
+
+        if experiencia and data and horario and num_pessoas:
+            vagas = capacidade.vagas_restantes(experiencia, data, horario, excluir_pk=self.instance.pk)
+            if num_pessoas > vagas:
+                mensagem = (
+                    f'Esse horário já está lotado. Restam {max(vagas, 0)} lugares às {horario.strftime("%H:%M")}.'
+                )
+                sugestoes = capacidade.sugerir_horarios_vizinhos(experiencia, data, horario, num_pessoas)
+                if sugestoes:
+                    horarios_texto = ', '.join(horario_sugerido.strftime('%H:%M') for horario_sugerido in sugestoes)
+                    mensagem += f' Horários com vaga no mesmo dia: {horarios_texto}.'
+                self.add_error(None, mensagem)
+
+        return cleaned_data
 
 
 class ExperienciaForm(forms.ModelForm):
