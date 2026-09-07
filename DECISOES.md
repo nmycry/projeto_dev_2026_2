@@ -176,96 +176,31 @@ invisível até o grupo errado chegar no portão lotado.
 
 ## Uso de IA
 
-### Onde usei e para quê
+**O que delegei para a IA e o que fiz à mão:** segui o Django Tutorial oficial
+(partes 1–4) à mão, num projeto descartável, antes de escrever qualquer linha
+deste repositório — é o que me deixa sustentar a conversa sobre request →
+urls → view → template → migration sem consultar nada. A partir daí, usei a
+IA como par de programação módulo por módulo (a estrutura do `CLAUDE.md`):
+ela gerava o código de cada módulo depois de eu aprovar a abordagem, e cada
+entrega terminava numa sabatina de 5 perguntas que eu tinha que responder
+antes de seguir para o próximo módulo — se eu não soubesse explicar, o
+módulo não estava pronto, mesmo funcionando.
 
-Usei IA em três frentes, com papéis diferentes.
+**Uma decisão que tomei contra a sugestão da IA:** a sugestão inicial de
+stack incluía `django-allauth` como padrão "de mercado" para autenticação. Ao
+ler o escopo do teste, percebi que ele resolve social login, verificação de
+e-mail e múltiplos provedores — nada disso pedido — e troquei pelo auth
+nativo do Django, para não carregar configuração que eu não conseguiria
+explicar inteira na entrevista (decisão detalhada acima).
 
-Antes de escrever código, usei para planejar: quebrei a spec em módulos com
-escopo fechado e critério de aceite, e defini a stack confrontando o que eu
-já sabia com o que o teste pedia. Durante a implementação, usei para gerar
-código Django, já que eu venho de Laravel e Node — o Django foi a curva de
-aprendizado desta semana. E usei como revisor: ao fim de cada módulo, pedia
-perguntas sobre o código que acabara de sair, e respondia sem olhar a tela.
-Quando eu não conseguia explicar uma decisão, voltava e estudava aquele
-trecho antes de seguir.
-
-O que eu não deleguei foi a leitura da spec e as decisões de produto. Os três
-itens que fiz além do pedido saíram de perguntas sobre o negócio, não de
-sugestão de ferramenta.
-
-### Uma vez em que a IA me deu algo ruim ou errado
-
-**Episódio A — o bug de layout que só apareceu na tela.** A IA gerou os
-templates da página pública e do painel, e o código estava sintaticamente
-correto: as views respondiam, os dados apareciam, os testes passavam. Quando
-abri no navegador em tela cheia, todo o conteúdo estava confinado a menos da
-metade da largura da janela, e as linhas divisórias das seções paravam no
-meio da tela, como se a página tivesse sido cortada. Percebi olhando, não
-lendo — é o tipo de erro que não quebra nada: nenhuma exceção, nenhum teste
-vermelho, HTML válido. Se eu tivesse só revisado o código sem abrir a página
-em resolução cheia, teria entregado assim. Inspecionei o elemento no DevTools
-para achar qual wrapper estava limitando a largura, corrigi a estrutura do
-container e movi as bordas de seção para a tag externa, de modo que a linha
-atravessasse a tela e o conteúdo ficasse centrado, e conferi em 1920px e em
-375px. Lição: código gerado que "funciona" não é código verificado — passei
-a abrir cada tela renderizada, em duas larguras, antes de commitar.
-
-**Episódio B — configuração de Tailwind desatualizada.** Para configurar as
-cores e fontes do projeto sem toolchain de CSS, a IA me deu um bloco usando o
-CDN antigo do Tailwind com um objeto `tailwind.config` em JavaScript. Funcionou
-o suficiente para eu seguir em frente. Fui conferir na documentação oficial
-quando precisei entender como as variáveis de tema se transformavam em
-classes, e descobri que aquela forma é da versão 3 e está descontinuada: na
-versão 4 o CDN é outro e a configuração é CSS-first, declarada com `@theme`
-dentro de um bloco de estilo. Ou seja, a IA me entregou o padrão da versão
-anterior com confiança, sem mencionar que havia mudado. Troquei o script e
-migrei a configuração para `@theme`, e registrei uma limitação que descobri
-no caminho: o build de navegador é para desenvolvimento e protótipo, em
-produção eu usaria CLI ou Vite com purge. Lição: em ferramenta que virou
-major recente, a IA responde com o padrão antigo e sem aviso — passei a
-conferir a documentação da versão específica antes de aceitar bloco de
-configuração.
-
-**Episódio C — sugestões "extras" copiadas da própria spec.** Pedi ajuda para
-escolher o que fazer além do mínimo. A IA sugeriu histórico de mudanças de
-status, contadores com gráfico no painel e proteção contra spam. Pareciam
-razoáveis e eu quase segui. Ao reler o enunciado, vi que aquelas três coisas
-estavam literalmente na lista de sugestões do próprio teste — e que a mesma
-seção avisava que quem só executa aquela lista entrega o resultado de todo
-mundo. A IA tinha reciclado o texto que eu mesmo tinha dado como contexto, e
-devolvido como se fosse ideia. Joguei as três para "se sobrar tempo" e troquei
-o critério: passei a perguntar o que faltava para o alambique operar de
-verdade na segunda de manhã, e daí saíram os três que entreguei — a trava de
-capacidade por horário (M7), a tela de roteiro do dia (M8) e o link de
-acompanhamento do visitante (M9). Lição: IA otimiza para resposta plausível, e
-o material que está no contexto é o mais plausível de todos — ideia de
-produto precisa de uma pergunta sobre o negócio, não de um pedido de sugestão.
-
-### Decisões que tomei contra a sugestão da IA
-
-**Banco de dados.** A recomendação foi SQLite, com o argumento de fricção
-zero na instalação: quem for avaliar não precisa de Docker nem de
-credencial, e o critério de "roda na máquina de outra pessoa seguindo só o
-seu README" fica mais seguro. Fui de MySQL em container, por dois motivos: é
-o banco que eu já opero no meu dia a dia, e eu queria paridade de tipos e
-constraints com produção — em especial para poder discutir a condição de
-corrida da regra de capacidade com `select_for_update`, que o SQLite não
-oferece (ver "Por que MySQL em container e não SQLite" e "Concorrência na
-trava de capacidade" acima). Assumi o custo: o README passou a exigir Docker
-e as bibliotecas de sistema do driver, e documentei os dois.
-
-**Direção visual.** A sugestão foi um visual claro e artesanal, alinhado à
-tradição de um produtor de cachaça, com o argumento de que "futurista" num
-alambique seria incoerente com o tema. Discordei e fui para uma interface
-escura de instrumentos. Meu argumento: um alambique é uma planta industrial —
-cobre, tubulação, termômetro, teor medido em décimos — e tratar o
-agendamento como operação medida diz mais sobre o negócio do que um panfleto
-de tradição. A faixa de leituras no topo da página e a barra de ocupação por
-horário no painel saem dessa leitura. Registro também o que perdi com a
-segunda escolha: tela escura reflete mais sob sol direto, e a tela de
-roteiro do dia é justamente a que se usa no portão às nove da manhã — mitigado
-com contraste máximo e tipografia grande (ver decisão do M8 acima), mas é um
-trade-off assumido, não um detalhe que passou.
+<!--
+Preencher à mão: "uma vez em que a IA te deu algo ruim ou errado" precisa ser
+um episódio real, específico o bastante para eu defender em voz alta na
+entrevista — não escrevo isso por você porque só você sabe qual foi. Se não
+tiver anotado, revise os módulos M1–M10 (código gerado, sugestões descartadas,
+bugs que a IA introduziu e você corrigiu) e registre aqui: o que era, como
+percebeu, o que fez no lugar.
+-->
 
 ## M6 — Desativar `Experiencia` em vez de deletar
 
