@@ -143,3 +143,178 @@ class VisitaDetailViewTests(TestCase):
         self.assertContains(resposta, 'Maria Silva')
         self.assertContains(resposta, 'Degustação Guiada')
         self.assertContains(resposta, '65,00')
+
+
+class VisitaMudarStatusTests(TestCase):
+    def setUp(self):
+        self.usuario = User.objects.create_user(username='responsavel', password='senha-forte-123')
+        self.experiencia = Experiencia.objects.create(
+            titulo='Visita Clássica',
+            descricao='Passeio guiado.',
+            duracao_minutos=60,
+            preco='35.00',
+            capacidade_por_horario=20,
+        )
+
+    def _criar_visita(self, status=Visita.Status.PENDENTE):
+        return Visita.objects.create(
+            nome='Maria Silva',
+            email='maria@exemplo.com',
+            experiencia=self.experiencia,
+            data=datetime.date.today(),
+            horario=datetime.time(14, 0),
+            num_pessoas=2,
+            status=status,
+        )
+
+    def test_exige_login(self):
+        visita = self._criar_visita()
+        url = reverse('visitas:visita_mudar_status', args=[visita.pk])
+
+        resposta = self.client.post(url, {'status': 'CONFIRMADA'})
+
+        self.assertEqual(resposta.status_code, 302)
+        self.assertIn(reverse('visitas:login'), resposta.url)
+        visita.refresh_from_db()
+        self.assertEqual(visita.status, Visita.Status.PENDENTE)
+
+    def test_confirmar_visita_pendente_via_htmx_devolve_so_o_fragmento(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+        visita = self._criar_visita()
+        url = reverse('visitas:visita_mudar_status', args=[visita.pk])
+
+        resposta = self.client.post(url, {'status': 'CONFIRMADA'}, HTTP_HX_REQUEST='true')
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertNotIn(b'<html', resposta.content)
+        self.assertIn('toast-sucesso', resposta.headers['HX-Trigger'])
+        visita.refresh_from_db()
+        self.assertEqual(visita.status, Visita.Status.CONFIRMADA)
+
+    def test_cancelar_visita_confirmada_via_htmx(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+        visita = self._criar_visita(status=Visita.Status.CONFIRMADA)
+        url = reverse('visitas:visita_mudar_status', args=[visita.pk])
+
+        resposta = self.client.post(url, {'status': 'CANCELADA'}, HTTP_HX_REQUEST='true')
+
+        self.assertEqual(resposta.status_code, 200)
+        visita.refresh_from_db()
+        self.assertEqual(visita.status, Visita.Status.CANCELADA)
+
+    def test_transicao_invalida_e_recusada_no_backend(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+        visita = self._criar_visita(status=Visita.Status.CANCELADA)
+        url = reverse('visitas:visita_mudar_status', args=[visita.pk])
+
+        resposta = self.client.post(url, {'status': 'CONFIRMADA'}, HTTP_HX_REQUEST='true')
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn('toast-erro', resposta.headers['HX-Trigger'])
+        visita.refresh_from_db()
+        self.assertEqual(visita.status, Visita.Status.CANCELADA)
+
+    def test_sem_htmx_redireciona_com_mensagem(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+        visita = self._criar_visita()
+        url = reverse('visitas:visita_mudar_status', args=[visita.pk])
+
+        resposta = self.client.post(url, {'status': 'CONFIRMADA'})
+
+        self.assertRedirects(resposta, reverse('visitas:visita_detail', args=[visita.pk]))
+        visita.refresh_from_db()
+        self.assertEqual(visita.status, Visita.Status.CONFIRMADA)
+
+
+class ExperienciaCrudTests(TestCase):
+    def setUp(self):
+        self.usuario = User.objects.create_user(username='responsavel', password='senha-forte-123')
+        self.experiencia = Experiencia.objects.create(
+            titulo='Visita Clássica',
+            descricao='Passeio guiado.',
+            duracao_minutos=60,
+            preco='35.00',
+            capacidade_por_horario=20,
+        )
+
+    def _dados_validos(self, **sobrescreve):
+        dados = {
+            'titulo': 'Visita Clássica',
+            'descricao': 'Passeio guiado.',
+            'duracao_minutos': 60,
+            'preco': '35.00',
+            'capacidade_por_horario': 20,
+            'ativa': True,
+        }
+        dados.update(sobrescreve)
+        return dados
+
+    def test_lista_exige_login(self):
+        resposta = self.client.get(reverse('visitas:experiencia_list'))
+        self.assertEqual(resposta.status_code, 302)
+
+    def test_criar_exige_login(self):
+        resposta = self.client.get(reverse('visitas:experiencia_create'))
+        self.assertEqual(resposta.status_code, 302)
+
+    def test_editar_exige_login(self):
+        resposta = self.client.get(reverse('visitas:experiencia_update', args=[self.experiencia.pk]))
+        self.assertEqual(resposta.status_code, 302)
+
+    def test_criar_experiencia(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+
+        resposta = self.client.post(
+            reverse('visitas:experiencia_create'),
+            self._dados_validos(titulo='Tour Completo'),
+        )
+
+        self.assertRedirects(resposta, reverse('visitas:experiencia_list'))
+        self.assertTrue(Experiencia.objects.filter(titulo='Tour Completo').exists())
+
+    def test_desativar_experiencia_sem_visita_pendente_futura(self):
+        self.client.login(username='responsavel', password='senha-forte-123')
+        url = reverse('visitas:experiencia_update', args=[self.experiencia.pk])
+
+        resposta = self.client.post(url, self._dados_validos(ativa=False), follow=True)
+
+        self.experiencia.refresh_from_db()
+        self.assertFalse(self.experiencia.ativa)
+        self.assertContains(resposta, 'Experiência desativada.')
+
+    def test_desativar_experiencia_avisa_quantidade_de_visitas_pendentes_futuras(self):
+        Visita.objects.create(
+            nome='Maria Silva',
+            email='maria@exemplo.com',
+            experiencia=self.experiencia,
+            data=datetime.date.today() + datetime.timedelta(days=5),
+            horario=datetime.time(14, 0),
+            num_pessoas=2,
+            status=Visita.Status.PENDENTE,
+        )
+        self.client.login(username='responsavel', password='senha-forte-123')
+        url = reverse('visitas:experiencia_update', args=[self.experiencia.pk])
+
+        resposta = self.client.post(url, self._dados_validos(ativa=False), follow=True)
+
+        self.assertContains(resposta, '1 visita(s) pendente(s) futura(s)')
+
+    def test_experiencia_desativada_some_da_home_publica_mas_visita_antiga_continua(self):
+        visita = Visita.objects.create(
+            nome='Maria Silva',
+            email='maria@exemplo.com',
+            experiencia=self.experiencia,
+            data=datetime.date.today(),
+            horario=datetime.time(14, 0),
+            num_pessoas=2,
+            status=Visita.Status.CONFIRMADA,
+        )
+        self.experiencia.ativa = False
+        self.experiencia.save(update_fields=['ativa'])
+
+        resposta_home = self.client.get(reverse('visitas:home'))
+        self.assertNotContains(resposta_home, 'Visita Clássica')
+
+        self.client.login(username='responsavel', password='senha-forte-123')
+        resposta_detalhe = self.client.get(reverse('visitas:visita_detail', args=[visita.pk]))
+        self.assertContains(resposta_detalhe, 'Visita Clássica')

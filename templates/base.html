@@ -23,10 +23,28 @@
     }
   </style>
 
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      .destaque-status {
+        animation: destaque-status 600ms ease-out;
+      }
+    }
+    @keyframes destaque-status {
+      from { background-color: color-mix(in srgb, var(--color-cana) 20%, transparent); }
+      to { background-color: transparent; }
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/htmx.org@2"></script>
+  <script>
+    document.addEventListener('htmx:afterSwap', (evento) => {
+      if (evento.detail.target.matches('tr[id^="linha-visita-"]')) {
+        evento.detail.target.classList.add('destaque-status');
+      }
+    });
+  </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 </head>
-<body class="bg-papel text-garrafa font-corpo">
+<body class="bg-papel text-garrafa font-corpo" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <header class="flex items-center justify-between px-6 py-4 border-b border-barrica">
     <a href="{% url 'visitas:home' %}" class="font-medium tracking-tight">Alambique Sertão</a>
     <nav>

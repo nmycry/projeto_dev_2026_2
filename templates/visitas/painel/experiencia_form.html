@@ -1,0 +1,77 @@
+{% extends "visitas/painel/base_painel.html" %}
+
+{% block titulo %}{% if object %}Editar experiência{% else %}Nova experiência{% endif %} — Painel{% endblock %}
+
+{% block conteudo_painel %}
+<section class="px-6 py-10 max-w-xl">
+  <a href="{% url 'visitas:experiencia_list' %}" class="text-[14px] hover:text-cobre">&#9668; Voltar à listagem</a>
+
+  <h1 class="font-display text-[28px] leading-tight mt-4">
+    {% if object %}Editar experiência{% else %}Nova experiência{% endif %}
+  </h1>
+
+  <form method="post" class="mt-6 space-y-6">
+    {% csrf_token %}
+
+    <div>
+      <label for="{{ form.titulo.id_for_label }}" class="block text-[14px] mb-1">{{ form.titulo.label }}</label>
+      {{ form.titulo }}
+      {% if form.titulo.errors %}
+        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.titulo.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ form.descricao.id_for_label }}" class="block text-[14px] mb-1">{{ form.descricao.label }}</label>
+      {{ form.descricao }}
+      {% if form.descricao.errors %}
+        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.descricao.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <div>
+        <label for="{{ form.duracao_minutos.id_for_label }}" class="block text-[14px] mb-1">{{ form.duracao_minutos.label }}</label>
+        {{ form.duracao_minutos }}
+        {% if form.duracao_minutos.errors %}
+          <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.duracao_minutos.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.preco.id_for_label }}" class="block text-[14px] mb-1">{{ form.preco.label }}</label>
+        {{ form.preco }}
+        {% if form.preco.errors %}
+          <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.preco.errors.0 }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <label for="{{ form.capacidade_por_horario.id_for_label }}" class="block text-[14px] mb-1">{{ form.capacidade_por_horario.label }}</label>
+      {{ form.capacidade_por_horario }}
+      {% if form.capacidade_por_horario.errors %}
+        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.capacidade_por_horario.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="flex items-center gap-2">
+      {{ form.ativa }}
+      <label for="{{ form.ativa.id_for_label }}" class="text-[14px]">{{ form.ativa.label }}</label>
+      {% if form.ativa.errors %}
+        <p class="mt-1 text-[14px] text-[#8A3B2A]">{{ form.ativa.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="flex items-center gap-6">
+      <button
+        type="submit"
+        class="bg-cobre text-papel px-6 py-3 rounded-rotulo hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre"
+      >
+        Salvar
+      </button>
+      <a href="{% url 'visitas:experiencia_list' %}" class="text-[14px] hover:text-cobre">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -21,6 +21,12 @@ class Visita(models.Model):
         CONFIRMADA = 'CONFIRMADA', 'Confirmada'
         CANCELADA = 'CANCELADA', 'Cancelada'
 
+    TRANSICOES_PERMITIDAS = {
+        Status.PENDENTE: {Status.CONFIRMADA, Status.CANCELADA},
+        Status.CONFIRMADA: {Status.CANCELADA},
+        Status.CANCELADA: set(),
+    }
+
     nome = models.CharField(max_length=120)
     email = models.EmailField()
     telefone = models.CharField(max_length=20, blank=True)
@@ -46,3 +52,6 @@ class Visita(models.Model):
 
     def __str__(self):
         return f'{self.nome} - {self.experiencia} ({self.data} {self.horario})'
+
+    def pode_transicionar_para(self, novo_status):
+        return novo_status in self.TRANSICOES_PERMITIDAS.get(self.status, set())

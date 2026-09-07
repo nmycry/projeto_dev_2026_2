@@ -1,0 +1,60 @@
+<tr
+  id="linha-visita-{{ visita.pk }}"
+  class="border-b border-barrica/40 hover:bg-cana/10"
+>
+  <td class="py-2 pr-4 whitespace-nowrap">{{ visita.data|date:"d/m/Y" }}</td>
+  <td class="py-2 pr-4 whitespace-nowrap">{{ visita.horario|time:"H:i" }}</td>
+  <td class="py-2 pr-4">
+    <a href="{% url 'visitas:visita_detail' visita.pk %}" class="hover:text-cobre">{{ visita.nome }}</a>
+  </td>
+  <td class="py-2 pr-4">{{ visita.experiencia.titulo }}</td>
+  <td class="py-2 pr-4 text-right">{{ visita.num_pessoas }}</td>
+  <td class="py-2 pr-4">{% include "visitas/painel/_status_badge.html" %}</td>
+  <td class="py-2 pr-4 text-right whitespace-nowrap">
+    {% if visita.status == 'PENDENTE' %}
+      <form
+        method="post"
+        action="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-post="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-target="#linha-visita-{{ visita.pk }}"
+        hx-swap="outerHTML"
+        class="inline"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="status" value="CONFIRMADA">
+        <button type="submit" class="text-cobre hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
+          Confirmar
+        </button>
+      </form>
+      <form
+        method="post"
+        action="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-post="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-target="#linha-visita-{{ visita.pk }}"
+        hx-swap="outerHTML"
+        class="inline ml-3"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="status" value="CANCELADA">
+        <button type="submit" class="hover:text-cobre hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
+          Cancelar
+        </button>
+      </form>
+    {% elif visita.status == 'CONFIRMADA' %}
+      <form
+        method="post"
+        action="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-post="{% url 'visitas:visita_mudar_status' visita.pk %}"
+        hx-target="#linha-visita-{{ visita.pk }}"
+        hx-swap="outerHTML"
+        class="inline"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="status" value="CANCELADA">
+        <button type="submit" class="hover:text-cobre hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
+          Cancelar
+        </button>
+      </form>
+    {% endif %}
+  </td>
+</tr>

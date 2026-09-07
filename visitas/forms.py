@@ -54,3 +54,25 @@ class VisitaForm(forms.ModelForm):
         if not experiencia.ativa:
             raise forms.ValidationError('Essa experiência não está mais disponível.')
         return experiencia
+
+
+class ExperienciaForm(forms.ModelForm):
+    class Meta:
+        model = Experiencia
+        fields = ['titulo', 'descricao', 'duracao_minutos', 'preco', 'capacidade_por_horario', 'ativa']
+        labels = {
+            'titulo': 'Título',
+            'descricao': 'Descrição',
+            'duracao_minutos': 'Duração (minutos)',
+            'preco': 'Preço (R$)',
+            'capacidade_por_horario': 'Capacidade por horário',
+            'ativa': 'Ativa',
+        }
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': CAMPO_TEXTO, 'maxlength': 120, 'required': True}),
+            'descricao': forms.Textarea(attrs={'class': CAMPO_TEXTO, 'rows': 4, 'required': True}),
+            'duracao_minutos': forms.NumberInput(attrs={'class': CAMPO_TEXTO, 'min': 1, 'required': True}),
+            'preco': forms.NumberInput(attrs={'class': CAMPO_TEXTO, 'min': 0, 'step': '0.01', 'required': True}),
+            'capacidade_por_horario': forms.NumberInput(attrs={'class': CAMPO_TEXTO, 'min': 1, 'required': True}),
+            'ativa': forms.CheckboxInput(),
+        }

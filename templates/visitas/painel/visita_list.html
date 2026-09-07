@@ -46,31 +46,12 @@
             <th class="py-2 pr-4">Experiência</th>
             <th class="py-2 pr-4 text-right">Pessoas</th>
             <th class="py-2 pr-4">Status</th>
+            <th class="py-2 pr-4 text-right">Ação</th>
           </tr>
         </thead>
         <tbody>
           {% for visita in visitas %}
-          <tr
-            class="border-b border-barrica/40 cursor-pointer hover:bg-cana/10"
-            onclick="window.location='{% url 'visitas:visita_detail' visita.pk %}'"
-          >
-            <td class="py-2 pr-4 whitespace-nowrap">{{ visita.data|date:"d/m/Y" }}</td>
-            <td class="py-2 pr-4 whitespace-nowrap">{{ visita.horario|time:"H:i" }}</td>
-            <td class="py-2 pr-4">
-              <a href="{% url 'visitas:visita_detail' visita.pk %}" class="hover:text-cobre">{{ visita.nome }}</a>
-            </td>
-            <td class="py-2 pr-4">{{ visita.experiencia.titulo }}</td>
-            <td class="py-2 pr-4 text-right">{{ visita.num_pessoas }}</td>
-            <td class="py-2 pr-4">
-              {% if visita.status == 'PENDENTE' %}
-                <span class="inline-block rounded-full px-3 py-1 bg-[#F0E4CE] text-[#7A5518]">pendente</span>
-              {% elif visita.status == 'CONFIRMADA' %}
-                <span class="inline-block rounded-full px-3 py-1 bg-[#DDE5CE] text-[#3F5426]">confirmada</span>
-              {% else %}
-                <span class="inline-block rounded-full px-3 py-1 bg-[#EFDAD5] text-[#8A3B2A]">cancelada</span>
-              {% endif %}
-            </td>
-          </tr>
+            {% include "visitas/painel/_linha_visita.html" %}
           {% endfor %}
         </tbody>
       </table>

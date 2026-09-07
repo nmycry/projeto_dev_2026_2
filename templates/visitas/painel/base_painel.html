@@ -2,14 +2,42 @@
 
 {% block conteudo %}
 <div class="border-b border-barrica px-6 py-3 flex items-center justify-between text-[14px]">
-  <span>{{ user.get_username }}</span>
-  <form method="post" action="{% url 'visitas:logout' %}">
-    {% csrf_token %}
-    <button type="submit" class="hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
-      Sair
-    </button>
-  </form>
+  <nav class="flex gap-6">
+    <a href="{% url 'visitas:visita_list' %}" class="hover:text-cobre">Visitas</a>
+    <a href="{% url 'visitas:experiencia_list' %}" class="hover:text-cobre">Experiências</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <span>{{ user.get_username }}</span>
+    <form method="post" action="{% url 'visitas:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="hover:text-cobre focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobre">
+        Sair
+      </button>
+    </form>
+  </div>
 </div>
 
+{% if messages %}
+  <ul class="px-6 pt-4 space-y-2 text-[14px]">
+    {% for message in messages %}
+      <li class="border-l-2 border-barrica pl-3 {% if message.tags == 'error' %}text-[#8A3B2A]{% elif message.tags == 'warning' %}text-[#7A5518]{% else %}text-[#3F5426]{% endif %}">
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 {% block conteudo_painel %}{% endblock %}
+
+<div
+  x-data="{ visivel: false, texto: '' }"
+  x-show="visivel"
+  x-transition
+  @toast-sucesso.window="texto = $event.detail.value; visivel = true; setTimeout(() => visivel = false, 4000)"
+  @toast-erro.window="texto = $event.detail.value; visivel = true; setTimeout(() => visivel = false, 4000)"
+  class="fixed bottom-6 right-6 bg-garrafa text-papel px-4 py-3 rounded-rotulo text-[14px]"
+  style="display: none;"
+>
+  <span x-text="texto"></span>
+</div>
 {% endblock %}

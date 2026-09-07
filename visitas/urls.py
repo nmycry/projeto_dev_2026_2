@@ -13,4 +13,8 @@ urlpatterns = [
     path('painel/', painel.PainelHomeView.as_view(), name='painel_home'),
     path('painel/visitas/', painel.VisitaListView.as_view(), name='visita_list'),
     path('painel/visitas/<int:pk>/', painel.VisitaDetailView.as_view(), name='visita_detail'),
+    path('painel/visitas/<int:pk>/status/', painel.visita_mudar_status, name='visita_mudar_status'),
+    path('painel/experiencias/', painel.ExperienciaListView.as_view(), name='experiencia_list'),
+    path('painel/experiencias/nova/', painel.ExperienciaCreateView.as_view(), name='experiencia_create'),
+    path('painel/experiencias/<int:pk>/editar/', painel.ExperienciaUpdateView.as_view(), name='experiencia_update'),
 ]
